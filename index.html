@@ -9,7 +9,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         /* ------------------ Reset & Variables ------------------ */
-        :root {
+:root {
             --bg-dark: #050a05;
             --card-bg: rgba(20, 35, 20, 0.7);
             --card-border: 1px solid rgba(0, 255, 136, 0.15);
@@ -21,8 +21,8 @@
             --text-main: #ffffff;
             --text-sec: #a0cfa0;
             --font-main: 'Montserrat', sans-serif;
-            --radius: 18px;
-            --nav-height: 70px;
+            --nav-height: 60px; /* Чуть уменьшили высоту меню */
+            --radius: 16px;     /* Чуть аккуратнее скругления */
         }
 
         * {
@@ -37,7 +37,7 @@
             font-family: var(--font-main);
             background-color: var(--bg-dark);
             /* Сложный фон с сеткой и виньеткой */
-            background-image: 
+            background-image:
                 linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px),
                 radial-gradient(circle at center, rgba(0, 255, 136, 0.05) 0%, #050a05 80%);
@@ -47,6 +47,20 @@
             display: flex;
             justify-content: center;
             overflow-x: hidden;
+            font-size: 14px; /* Базовый шрифт поменьше */
+        }
+
+        /* Более стильные инпуты */
+        .custom-input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .custom-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.1);
         }
 
         /* Кастомный скроллбар */
@@ -705,6 +719,52 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes fadeText { from { opacity: 0.5; } to { opacity: 1; } }
 
+        /* --- MOBILE OPTIMIZATION --- */
+        @media (max-width: 400px) {
+            .app-container {
+                padding-bottom: 80px; /* Место под меню */
+            }
+
+            h2 { font-size: 16px; margin-bottom: 10px; }
+
+            /* Уменьшаем карточки игр */
+            .game-card {
+                padding: 12px;
+                height: 95px; /* Меньше высота */
+            }
+            .game-card i { font-size: 24px; margin-bottom: 6px; }
+            .game-card p { font-size: 11px; }
+
+            /* Компактные панели */
+            .panel { padding: 15px; margin-bottom: 15px; }
+
+            /* Навигация для маленьких экранов */
+            .nav-bar {
+                width: 96%;
+                height: 55px;
+                bottom: 10px;
+                backdrop-filter: blur(20px);
+                background: rgba(10, 15, 10, 0.95);
+            }
+            .nav-item { width: 40px; height: 40px; }
+            .nav-item i { font-size: 16px; margin-bottom: 2px; }
+            .nav-item span { font-size: 8px; } /* Текст меньше */
+
+            /* Кнопки */
+            .btn-main {
+                padding: 12px;
+                font-size: 13px;
+                border-radius: 10px;
+            }
+
+            /* Сетка кейсов */
+            .case-weapon {
+                min-width: 90px;
+                height: 90px;
+            }
+            .case-weapon img { width: 50px; height: 50px; }
+        }
+
     </style>
 </head>
 <body>
@@ -787,36 +847,53 @@
         </div>
 
         <div id="view-bonuses" class="hidden fade-in">
-            <h2>Бонусы и Промо</h2>
-            
-            <div class="panel">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
-                    <i class="fas fa-fire" style="font-size:24px; color:orange;"></i>
-                    <div>
-                        <h3 style="margin:0;">Ежедневный Огонек</h3>
-                        <span style="font-size:12px; color:#888;">Забирай награды за стрики!</span>
-                    </div>
+            <h2>Бонусы</h2>
+
+            <!-- НОВЫЙ БЛОК: Активация промокода -->
+            <div class="panel" style="border-color: var(--primary);">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <i class="fas fa-ticket-alt" style="color:var(--primary); font-size: 20px;"></i>
+                    <h3 style="margin:0; font-size:15px;">Есть промокод?</h3>
                 </div>
-                
-                <div class="daily-track">
-                    <div class="daily-day active"><span>7 дн</span><span class="daily-reward">0.1$</span></div>
-                    <div class="daily-day"><span>15 дн</span><span class="daily-reward">1$</span></div>
-                    <div class="daily-day"><span>30 дн</span><span class="daily-reward">5$</span></div>
-                    <div class="daily-day"><span>66 дн</span><span class="daily-reward">10$</span></div>
-                    <div class="daily-day"><span>100 дн</span><span class="daily-reward">50$</span></div>
-                    <div class="daily-day"><span>200 дн</span><span class="daily-reward">100$</span></div>
+                <div class="custom-input-group" style="margin-bottom:0;">
+                    <input type="text" id="user-promo-input" class="custom-input" placeholder="Введите код (напр. START)" style="text-align:left;">
+                    <button class="btn-main" style="width: auto; padding: 0 20px; font-size:12px;" onclick="activatePromo()">
+                        <i class="fas fa-check"></i>
+                    </button>
                 </div>
-                
-                <button class="btn-main" disabled>До награды 5 дней</button>
             </div>
 
+            <!-- Ежедневный бонус (Улучшенный дизайн) -->
             <div class="panel">
-                <h4 style="margin-top:0;">Реферальная система</h4>
-                <p style="font-size:12px; color:#888;">Получи <b style="color:#fff">6% от проигрыша</b> приглашенного друга.</p>
-                <div class="custom-input-group">
-                    <input type="text" class="custom-input" value="bush.casino/ref/8841" readonly>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+                    <i class="fas fa-fire" style="font-size:20px; color:orange;"></i>
+                    <div>
+                        <h3 style="margin:0; font-size:15px;">Ежедневная награда</h3>
+                        <span style="font-size:11px; color:#888;">Заходи каждый день!</span>
+                    </div>
                 </div>
-                <button class="btn-main" style="background:#333; color:#fff;" onclick="showToast('Ссылка скопирована')">Копировать</button>
+
+                <div class="daily-track">
+                    <div class="daily-day active"><span>1</span><span class="daily-reward">0.1$</span></div>
+                    <div class="daily-day"><span>2</span><span class="daily-reward">0.3$</span></div>
+                    <div class="daily-day"><span>3</span><span class="daily-reward">0.5$</span></div>
+                    <div class="daily-day"><span>7</span><span class="daily-reward">2.0$</span></div>
+                    <div class="daily-day"><span>14</span><span class="daily-reward">5.0$</span></div>
+                </div>
+
+                <button class="btn-main" disabled style="margin-top:10px; opacity:0.7;">Награда получена</button>
+            </div>
+
+            <!-- Рефералка -->
+            <div class="panel">
+                <h4 style="margin-top:0; font-size:14px;">Пригласи друга</h4>
+                <p style="font-size:11px; color:#888; margin-bottom:10px;">Получай <b>6%</b> с каждого пополнения друга пожизненно.</p>
+                <div class="custom-input-group">
+                    <input type="text" class="custom-input" value="t.me/bushcasino?start=8841" readonly style="font-size:11px; color:var(--text-sec);">
+                    <button class="btn-main" style="width: auto; background:#333; padding:0 15px;" onclick="showToast('Ссылка скопирована')">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -2185,6 +2262,53 @@
             btn.style.color = "#aaa";
         }
         showToast(`Выводы ${withdrawalsEnabled ? 'включены' : 'отключены'}`, 'success');
+    }
+
+    // --- PROMO CODE LOGIC ---
+    const usedPromos = []; // Хранит использованные коды в рамках сессии
+
+    function activatePromo() {
+        const input = document.getElementById('user-promo-input');
+        const code = input.value.trim().toUpperCase();
+
+        if(!code) return showToast('Введите код', 'error');
+
+        // Защита от повторного ввода
+        if(usedPromos.includes(code)) {
+            return showToast('Вы уже активировали этот код', 'error');
+        }
+
+        // --- СПИСОК РАБОЧИХ КОДОВ ---
+        if(code === 'START') {
+            updateBalance(50);
+            showToast('Промокод START активирован! +50$', 'success');
+            usedPromos.push(code);
+        }
+        else if(code === 'ADMIN') {
+            updateBalance(1000);
+            showToast('Админский код! +1000$', 'success');
+            usedPromos.push(code);
+        }
+        else if(code === 'BUSH') {
+             // Пример выдачи не денег, а уведомления
+             showToast('Секретный код! Удача повышена.', 'success');
+             usedPromos.push(code);
+        }
+        else {
+            // Имитация задержки проверки на сервере
+            const btn = document.querySelector('#view-bonuses .btn-main');
+            const originalIcon = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            setTimeout(() => {
+                showToast('Промокод не найден или истек', 'error');
+                btn.innerHTML = originalIcon;
+            }, 600);
+            return; // Чтобы не очищать поле ниже при ошибке
+        }
+
+        // Очистка поля при успехе
+        input.value = '';
     }
 
 </script>
